@@ -719,12 +719,18 @@ class MatrixTab(ITab, IMessageEditorController):
         self.req_viewer = self.callbacks.createMessageEditor(self, False)
         self.resp_viewer = self.callbacks.createMessageEditor(self, False)
 
+        self.viewers_split = JSplitPane(
+            JSplitPane.HORIZONTAL_SPLIT,
+            self.req_viewer.getComponent(),
+            self.resp_viewer.getComponent())
+        self.viewers_split.setResizeWeight(0.5)
+        self.viewers_split.setOneTouchExpandable(True)
         sp = JSplitPane(JSplitPane.VERTICAL_SPLIT,
                         JScrollPane(self.table),
-                        JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                   self.req_viewer.getComponent(),
-                                   self.resp_viewer.getComponent()))
+                        self.viewers_split)
         sp.setResizeWeight(0.55)
+        sp.setOneTouchExpandable(True)
+        self.matrix_split = sp
         # draggable divider between config strip and matrix: every region
         # scales when the Burp window resizes or the divider is moved
         self.main_split = JSplitPane(JSplitPane.VERTICAL_SPLIT, top, sp)
@@ -738,6 +744,8 @@ class MatrixTab(ITab, IMessageEditorController):
                 self.cfg_split_ue.setDividerLocation(0.5)
                 self.cfg_split_all.setDividerLocation(0.62)
                 self.main_split.setDividerLocation(0.34)
+                self.matrix_split.setDividerLocation(0.55)
+                self.viewers_split.setDividerLocation(0.5)
             except Exception:
                 pass
         SwingUtilities.invokeLater(_set_dividers)
